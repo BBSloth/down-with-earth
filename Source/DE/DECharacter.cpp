@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "DEPlayerController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ADECharacter
@@ -43,8 +44,8 @@ ADECharacter::ADECharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ADECharacter::OnCharacterBeginOverlap);
+
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,6 +75,14 @@ void ADECharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ADECharacter::OnResetVR);
+
+	if(Controller)
+	{
+		ADEPlayerController* PlayerController = Cast<ADEPlayerController>(Controller);
+		if(PlayerController) {
+			PlayerController->SetDefaultCharacter(this);
+		}
+	}
 }
 
 
@@ -84,12 +93,29 @@ void ADECharacter::OnResetVR()
 
 void ADECharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		Jump();
+	Jump();
 }
 
 void ADECharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
-		StopJumping();
+	StopJumping();
+}
+
+void ADECharacter::Interact()
+{
+	UE_LOG(LogTemp, Warning, TEXT("PLL"));
+	if(CurrentOverlap) {
+		if(CurrentOverlap->IsA(APawn::StaticClass())) {
+			APawn* Pawn = Cast<APawn>(CurrentOverlap);
+			Controller->Possess(Pawn);
+		}
+	}
+}
+
+void ADECharacter::OnCharacterBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("oVER"));
+	CurrentOverlap = OtherActor;
 }
 
 void ADECharacter::TurnAtRate(float Rate)
@@ -106,6 +132,7 @@ void ADECharacter::LookUpAtRate(float Rate)
 
 void ADECharacter::MoveForward(float Value)
 {
+
 	if ((Controller != NULL) && (Value != 0.0f))
 	{
 		// find out which way is forward
