@@ -17,6 +17,7 @@ class DE_API ADEPlayerController : public APlayerController
 
 	ADECharacter* DefaultCharacter;
 
+	UFUNCTION(Server, Reliable, WithValidation)
 	void Interact();
 
 protected:
@@ -24,5 +25,6 @@ protected:
 
 public:
 	void SetDefaultCharacter(ADECharacter* Character);
+	ADECharacter* GetDefaultCharacter();
 	
 };

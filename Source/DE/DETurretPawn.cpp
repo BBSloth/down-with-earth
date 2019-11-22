@@ -14,16 +14,13 @@ ADETurretPawn::ADETurretPawn()
 
 	TurretBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Base"));
 	TurretBase->SetupAttachment(RootComponent);
-	TurretBase->AddLocalOffset(FVector(0, 0, 0));
 
 	TurretHead = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Head"));
 	TurretHead->SetupAttachment(TurretBase);
-	TurretHead->AddLocalOffset(FVector(0, 0, 0));
 
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap Sphere"));
 	OverlapSphere->SetupAttachment(RootComponent);
 	OverlapSphere->SetGenerateOverlapEvents(true);
-	OverlapSphere->AddLocalOffset(FVector(0, 0, 0));
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -36,26 +33,20 @@ ADETurretPawn::ADETurretPawn()
 
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
 	Muzzle->SetupAttachment(TurretHead);
-	Muzzle->AddLocalOffset(FVector(0, 0, 0));
 }
 
-// Called when the game starts or when spawned
-void ADETurretPawn::BeginPlay()
-{
+void ADETurretPawn::BeginPlay() {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
-void ADETurretPawn::Tick(float DeltaTime)
-{
+void ADETurretPawn::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void ADETurretPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
+void ADETurretPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	check(PlayerInputComponent);
@@ -65,29 +56,24 @@ void ADETurretPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ADETurretPawn::Fire);
 }
 
-void ADETurretPawn::Turn(float Value)
-{
+void ADETurretPawn::Turn(float Value) {
 	AddControllerYawInput(Value);
-	FRotator TurretBaseRotation = FRotator(0, FollowCamera->GetComponentRotation().Yaw, 0);
-	TurretBase->SetRelativeRotation(TurretBaseRotation.Quaternion());
+	TurretHead->SetRelativeRotation(FollowCamera->GetComponentRotation().Quaternion());
 }
 
-void ADETurretPawn::LookUp(float Value)
-{
+void ADETurretPawn::LookUp(float Value) {
 	AddControllerPitchInput(Value);
-	FRotator TurretHeadRotation = FRotator(FollowCamera->GetComponentRotation().Pitch, 0, 0);
-	TurretHead->SetRelativeRotation(TurretHeadRotation.Quaternion());
+	TurretHead->SetRelativeRotation(FollowCamera->GetComponentRotation().Quaternion());
 }
 
-void ADETurretPawn::Fire()
-{
-		UE_LOG(LogTemp, Warning, TEXT("FIRE"));
+void ADETurretPawn::Fire() {
+	ServerFire(Muzzle->GetComponentLocation(), TurretHead->GetComponentRotation());
+}
 
+bool ADETurretPawn::ServerFire_Validate(FVector Location, FRotator Direction) { return true; }
+
+void ADETurretPawn::ServerFire_Implementation(FVector Location, FRotator Direction) {
 	if(!Projectile) return;
-		UE_LOG(LogTemp, Warning, TEXT("PRoj"));
-
-	FVector Location = Muzzle->GetComponentLocation();
-	FRotator Rotation = TurretHead->GetComponentRotation();
-	GetWorld()->SpawnActor<AProjectile>(Projectile, Location, Rotation);
+	GetWorld()->SpawnActor<AProjectile>(Projectile, Location, Direction);
 }
 

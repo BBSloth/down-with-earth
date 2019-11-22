@@ -12,8 +12,6 @@ ADETarget::ADETarget()
 	
 	OverlapBox = CreateDefaultSubobject<UBoxComponent>(TEXT("OverlapBox"));
 	OverlapBox->SetupAttachment(RootComponent);
-	OverlapBox->SetGenerateOverlapEvents(true);
-	OverlapBox->OnComponentBeginOverlap.AddDynamic(this, &ADETarget::OnComponentBeginOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -31,18 +29,12 @@ void ADETarget::Tick(float DeltaTime)
 
 }
 
-void ADETarget::OnComponentBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	if(OtherActor->IsA(AProjectile::StaticClass())) {
-		AProjectile* Projectile = Cast<AProjectile>(OtherActor);
-		if(Projectile) {
-			Health -= Projectile->GetDamage();
-			Projectile->Destroy();
+void ADETarget::ApplyDamage(float Damage) {
+	UE_LOG(LogTemp, Warning, TEXT("damage"));
+	Health -= Damage;
 
-			if(Health <= 0) {
-				Destroy();
-			}
-		}
+	if(Health <= 0) {
+		Destroy();
 	}
 }
 

@@ -75,16 +75,16 @@ void ADECharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ADECharacter::OnResetVR);
-
-	if(Controller)
-	{
-		ADEPlayerController* PlayerController = Cast<ADEPlayerController>(Controller);
-		if(PlayerController) {
-			PlayerController->SetDefaultCharacter(this);
-		}
-	}
 }
 
+void ADECharacter::PossessedBy(AController * NewController) {
+	Super::PossessedBy(NewController);
+
+	ADEPlayerController* PlayerController = Cast<ADEPlayerController>(Controller);
+	if(PlayerController) {
+		PlayerController->SetDefaultCharacter(this);
+	}
+}
 
 void ADECharacter::OnResetVR()
 {
@@ -101,12 +101,13 @@ void ADECharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 	StopJumping();
 }
 
-void ADECharacter::Interact()
-{
-	UE_LOG(LogTemp, Warning, TEXT("PLL"));
+bool ADECharacter::Interact_Validate() { return true; }
+
+void ADECharacter::Interact_Implementation() {
 	if(CurrentOverlap) {
 		if(CurrentOverlap->IsA(APawn::StaticClass())) {
 			APawn* Pawn = Cast<APawn>(CurrentOverlap);
+			if(Pawn->IsPlayerControlled()) return;
 			Controller->Possess(Pawn);
 		}
 	}

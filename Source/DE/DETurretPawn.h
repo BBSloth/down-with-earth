@@ -22,10 +22,10 @@ class DE_API ADETurretPawn : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TurretHead, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* Muzzle;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = OverlapSphere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = OverlapSphere, meta = (AllowPrivateAccess = "true"))
 	USphereComponent* OverlapSphere;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -35,11 +35,9 @@ class DE_API ADETurretPawn : public APawn
 	TSubclassOf<class AProjectile> Projectile;
 
 public:
-	// Sets default values for this pawn's properties
 	ADETurretPawn();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void Turn(float Value);
@@ -47,11 +45,12 @@ protected:
 
 	void Fire();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire(FVector Location, FRotator Direction);
+
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 };
