@@ -1,22 +1,16 @@
 
 #include "DEPlayerController.h"
 
-void ADEPlayerController::SetupInputComponent()
-{
+void ADEPlayerController::SetupInputComponent() {
 	Super::SetupInputComponent();
-	UE_LOG(LogTemp, Warning, TEXT("SETUP"));
 
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ADEPlayerController::Interact);
 }
 
-void ADEPlayerController::SetDefaultCharacter(ADECharacter* Character)
-{
-	DefaultCharacter = Character;
-}
+bool ADEPlayerController::Interact_Validate() { return true; }
 
-void ADEPlayerController::Interact()
-{
-	UE_LOG(LogTemp, Warning, TEXT("PlayerCotnr"));
+void ADEPlayerController::Interact_Implementation() {
+	if(!DefaultCharacter) return;
 
 	if(GetPawn()->GetClass() == DefaultCharacter->GetClass()) {
 		if(DefaultCharacter) {
@@ -26,4 +20,12 @@ void ADEPlayerController::Interact()
 	else {
 		Possess(DefaultCharacter);
 	}
+}
+
+void ADEPlayerController::SetDefaultCharacter(ADECharacter* Character) {
+	DefaultCharacter = Character;
+}
+
+ADECharacter * ADEPlayerController::GetDefaultCharacter() {
+	return DefaultCharacter;
 }

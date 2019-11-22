@@ -67,9 +67,11 @@ protected:
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
+	
+	virtual void PossessedBy(AController* NewController) override;
 
 public:
+	UFUNCTION(Server, Reliable, WithValidation)
 	void Interact();
 
 	/** Returns CameraBoom subobject **/

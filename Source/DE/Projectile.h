@@ -12,16 +12,14 @@ class DE_API AProjectile : public AActor
 {
 	GENERATED_BODY()
 
-	float LifeTime;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile, meta = (AllowPrivateAccess = "true"))
 	float Speed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile, meta = (AllowPrivateAccess = "true"))
 	float Damage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile, meta = (AllowPrivateAccess = "true"))
-	float MaxLifeTime;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = OverlapBox, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = OverlapBox, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* OverlapBox;
@@ -33,6 +31,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 public:	
 	// Called every frame
