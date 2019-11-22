@@ -12,14 +12,16 @@ ADETurretActor::ADETurretActor()
 	OverlapSphere->SetGenerateOverlapEvents(true);
 	SetRootComponent(OverlapSphere);
 
-	TurretBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Base"));
-	TurretBase->SetupAttachment(RootComponent);
+	TurretBase = CreateDefaultSubobject<USceneComponent>(TEXT("Turret Base"));
+	SetRootComponent(TurretBase);
 
-	TurretHead = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Head"));
+	TurretHead = CreateDefaultSubobject<USceneComponent>(TEXT("Turret Head"));
 	TurretHead->SetupAttachment(TurretBase);
+	TurretHead->AddLocalOffset(FVector::ZeroVector);
 
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
-	Muzzle->SetupAttachment(RootComponent);
+	Muzzle->SetupAttachment(TurretHead);
+	Muzzle->AddLocalOffset(FVector::ZeroVector);
 }
 
 void ADETurretActor::BeginPlay() {
@@ -39,6 +41,11 @@ void ADETurretActor::ServerTick(float DeltaTime) {
 
 	if(FireTimer < FireRate) FireTimer += DeltaTime;
 	else AttemptFire();
+
+	if(Target) {
+		FVector Direction = Target->GetActorLocation() - GetActorLocation();
+		TurretHead->SetWorldRotation(Direction.Rotation());
+	}
 }
 
 void ADETurretActor::FindTarget() {

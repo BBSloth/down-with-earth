@@ -36,6 +36,15 @@ void AProjectile::OnComponentBeginOverlap(UPrimitiveComponent * OverlappedComp, 
 	ADETarget* Target = Cast<ADETarget>(OtherActor);
 	if(Target) {
 		Target->ApplyDamage(Damage);
+		Destroy();
+	}
+
+	if(OtherComp) {
+		ECollisionResponse Response = OtherComp->GetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic);
+		if(Response == ECollisionResponse::ECR_Block) {
+			UE_LOG(LogTemp,  Warning, TEXT("DEAD"));
+			Destroy();
+		}
 	}
 }
 

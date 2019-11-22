@@ -26,10 +26,10 @@ class DE_API ADETurretActor : public AActor
 	USphereComponent* OverlapSphere;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Turret, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* TurretBase;
+	USceneComponent* TurretBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Turret, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* TurretHead;
+	USceneComponent* TurretHead;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Turret, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* Muzzle;

@@ -12,27 +12,33 @@ ADETurretPawn::ADETurretPawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	TurretBase = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Base"));
-	TurretBase->SetupAttachment(RootComponent);
+	TurretBase = CreateDefaultSubobject<USceneComponent>(TEXT("Turret Base"));
+	SetRootComponent(TurretBase);
 
-	TurretHead = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Head"));
-	TurretHead->SetupAttachment(TurretBase);
+	TurretHead = CreateDefaultSubobject<USceneComponent>(TEXT("Turret Head"));
+	TurretHead->SetupAttachment(RootComponent);
+	TurretHead->AddLocalOffset(FVector::ZeroVector);
+
 
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Overlap Sphere"));
 	OverlapSphere->SetupAttachment(RootComponent);
 	OverlapSphere->SetGenerateOverlapEvents(true);
+	OverlapSphere->AddLocalOffset(FVector::ZeroVector);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f;
 	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->AddLocalOffset(FVector::ZeroVector);
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+	FollowCamera->AddLocalOffset(FVector::ZeroVector);
 
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
 	Muzzle->SetupAttachment(TurretHead);
+	Muzzle->AddLocalOffset(FVector::ZeroVector);
 }
 
 void ADETurretPawn::BeginPlay() {

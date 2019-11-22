@@ -14,10 +14,10 @@ class DE_API ADETurretPawn : public APawn
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TurretBase, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* TurretBase;
+	USceneComponent* TurretBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TurretHead, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* TurretHead;
+	USceneComponent* TurretHead;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TurretHead, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* Muzzle;
